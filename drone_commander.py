@@ -57,6 +57,7 @@ class MavCommander:
     #Callback Functions
     def altitude_callback(self,msg):
         self.altitude = msg
+        self.alt = msg.relative
 
     def global_position_callback(self,msg):
         self.global_pos = msg
@@ -72,13 +73,13 @@ class MavCommander:
 
     def state_callback(self,msg):
         self.state = msg
-        if self.state.mode == 'AUTO.LAND':
+        if self.state.mode == 'AUTO.LAND' and self.alt < 5:
             self.play_video()
 
     def wp_reached_callback(self,msg):
         print(msg.wp_seq)
         if msg.wp_seq == self.total_wps-1:
-            self.play_video()
+            self.land()
 
     #Functions
     def set_arm(self,arm): #Arm = true to arm, False to disarm
